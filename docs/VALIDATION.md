@@ -29,7 +29,7 @@ Opened the compiled JavaScript release build in Chrome at `http://127.0.0.1:8765
 
 Opened the built macOS app, observed a separate initially empty native database, loaded sample tasks through its real button, quit, reopened the final build and verified that all three tasks persisted. Confirmed the native SQLite plugin works and the final accessible tree separates task controls. Screenshots are actual captured app output; browser and native stores are intentionally independent.
 
-Screenshots: [Web desktop](screenshots/web-desktop.jpg), [empty state](screenshots/web-empty.jpg), [390px layout](screenshots/web-mobile.jpg), [390px form](screenshots/web-mobile-form.jpg), [macOS](screenshots/macos.png).
+Screenshots: [Web desktop](screenshots/web-desktop.jpg), [empty state](screenshots/web-empty.jpg), [390px layout](screenshots/web-mobile.jpg), [390px form](screenshots/web-mobile-form.jpg), [macOS](screenshots/macos.jpg).
 
 ## Tool limits and source updates
 
