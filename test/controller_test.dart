@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:todo_list/data/task_repository.dart';
 import 'package:todo_list/models/task.dart';
@@ -42,29 +43,26 @@ class MemoryStore implements TaskStore {
 }
 
 void main() {
-  test(
-    'filters and query combine; order is pending, priority descending, stable ID',
-    () async {
-      final store = MemoryStore()
-        ..rows = [
-          Task(id: 1, title: 'Aula', priority: 2),
-          Task(id: 2, title: 'Aula pronta', isDone: true),
-          Task(id: 3, title: 'Café', priority: 5),
-        ];
-      final c = TaskController(store);
-      await c.load();
-      expect(c.visible.map((t) => t.id), [3, 1, 2]);
-      expect(c.completed, 1);
-      c.setFilter(TaskFilter.pending);
-      c.setQuery(' AULA ');
-      expect(c.visible.single.id, 1);
-      c.setFilter(TaskFilter.done);
-      expect(c.visible.single.id, 2);
-      c.setQuery('missing');
-      expect(c.visible, isEmpty);
-      c.dispose();
-    },
-  );
+  test('filters and query combine; order is pending, priority descending, stable ID', () async {
+    final store = MemoryStore()
+      ..rows = [
+        Task(id: 1, title: 'Aula', priority: 2),
+        Task(id: 2, title: 'Aula pronta', isDone: true),
+        Task(id: 3, title: 'Café', priority: 5),
+      ];
+    final c = TaskController(store);
+    await c.load();
+    expect(c.visible.map((t) => t.id), [3, 1, 2]);
+    expect(c.completed, 1);
+    c.setFilter(TaskFilter.pending);
+    c.setQuery(' AULA ');
+    expect(c.visible.single.id, 1);
+    c.setFilter(TaskFilter.done);
+    expect(c.visible.single.id, 2);
+    c.setQuery('missing');
+    expect(c.visible, isEmpty);
+    c.dispose();
+  });
   test('failed writes keep visible state and allow retry', () async {
     final store = MemoryStore();
     final c = TaskController(store);

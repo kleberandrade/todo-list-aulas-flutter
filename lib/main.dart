@@ -1,6 +1,7 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'package:material_ui/material_ui.dart';
+
 import 'data/platform_native.dart'
     if (dart.library.js_interop) 'data/platform_web.dart';
 import 'state/task_controller.dart';

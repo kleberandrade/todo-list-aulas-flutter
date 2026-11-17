@@ -1,8 +1,11 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
+
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:todo_list/main.dart';
 import 'package:todo_list/models/task.dart';
 import 'package:todo_list/state/task_controller.dart';
+
 import 'controller_test.dart' show MemoryStore;
 
 void main() {
@@ -175,6 +178,34 @@ void main() {
       );
     } finally {
       semantics.dispose();
+    }
+  });
+  testWidgets('priority is disabled while the task is being saved', (
+    tester,
+  ) async {
+    final store = MemoryStore();
+    await start(tester, store: store);
+    await tester.tap(find.text('Nova tarefa').first);
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Título'),
+      'Saving',
+    );
+    store.gate = Completer<void>();
+    await tester.tap(find.text('Salvar tarefa'));
+    await tester.pump();
+    try {
+      expect(
+        tester
+            .widget<DropdownButtonFormField<int>>(
+              find.byType(DropdownButtonFormField<int>),
+            )
+            .enabled,
+        false,
+      );
+    } finally {
+      store.gate!.complete();
+      await tester.pumpAndSettle();
     }
   });
 }

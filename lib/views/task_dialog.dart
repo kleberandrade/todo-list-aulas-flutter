@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+
 import '../models/task.dart';
 import '../state/task_controller.dart';
 
@@ -103,6 +104,7 @@ class _TaskDialogState extends State<TaskDialog> {
                 ),
                 const SizedBox(height: 20),
                 DropdownButtonFormField<int>(
+                  enabled: !_saving,
                   initialValue: _priority,
                   decoration: const InputDecoration(labelText: 'Prioridade'),
                   items: List.generate(

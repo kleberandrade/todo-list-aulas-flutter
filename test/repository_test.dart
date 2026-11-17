@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -20,45 +21,42 @@ void main() {
     await directory.delete(recursive: true);
   });
 
-  test(
-    'upgrades actual v1 database without losing IDs, completion or nullable fields',
-    () async {
-      final old = await databaseFactoryFfi.openDatabase(
-        path,
-        options: OpenDatabaseOptions(
-          version: 1,
-          onCreate: (db, _) => db.execute(
-            'CREATE TABLE task(id INTEGER PRIMARY KEY, title TEXT, description TEXT, isDone INTEGER)',
-          ),
+  test('upgrades actual v1 database without losing IDs, completion or nullable fields', () async {
+    final old = await databaseFactoryFfi.openDatabase(
+      path,
+      options: OpenDatabaseOptions(
+        version: 1,
+        onCreate: (db, _) => db.execute(
+          'CREATE TABLE task(id INTEGER PRIMARY KEY, title TEXT, description TEXT, isDone INTEGER)',
         ),
-      );
-      await old.insert('task', {
-        'id': 42,
-        'title': 'Old task',
-        'description': 'Keep me',
-        'isDone': 1,
-      });
-      await old.insert('task', {
-        'id': 43,
-        'title': null,
-        'description': null,
-        'isDone': 0,
-      });
-      await old.close();
-      final rows = await repository.all();
-      expect(rows.map((t) => t.id), [43, 42]);
-      expect(rows.last.toMap(), {
-        'id': 42,
-        'title': 'Old task',
-        'description': 'Keep me',
-        'isDone': 1,
-        'priority': 3,
-      });
-      expect(rows.first.title, 'Tarefa sem título');
-      await repository.close();
-      expect((await repository.all()).length, 2);
-    },
-  );
+      ),
+    );
+    await old.insert('task', {
+      'id': 42,
+      'title': 'Old task',
+      'description': 'Keep me',
+      'isDone': 1,
+    });
+    await old.insert('task', {
+      'id': 43,
+      'title': null,
+      'description': null,
+      'isDone': 0,
+    });
+    await old.close();
+    final rows = await repository.all();
+    expect(rows.map((t) => t.id), [43, 42]);
+    expect(rows.last.toMap(), {
+      'id': 42,
+      'title': 'Old task',
+      'description': 'Keep me',
+      'isDone': 1,
+      'priority': 3,
+    });
+    expect(rows.first.title, 'Tarefa sem título');
+    await repository.close();
+    expect((await repository.all()).length, 2);
+  });
 
   test(
     'create edit complete delete and undo survive reopening with stable order',

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+
 import '../data/task_repository.dart';
 import '../models/task.dart';
 
@@ -70,8 +71,7 @@ class TaskController extends ChangeNotifier {
       _tasks = await store.all();
       return true;
     } catch (_) {
-      error =
-          'Não foi possível salvar. Seus dados continuam no dispositivo. Tente novamente.';
+      error = 'Não foi possível salvar. Seus dados continuam no dispositivo. Tente novamente.';
       return false;
     } finally {
       busy = false;
