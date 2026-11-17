@@ -30,6 +30,7 @@ class TaskCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Semantics(
+              container: true,
               label: task.isDone
                   ? 'Reabrir ${task.title}'
                   : 'Concluir ${task.title}',

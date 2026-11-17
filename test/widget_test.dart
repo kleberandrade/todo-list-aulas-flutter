@@ -41,9 +41,14 @@ void main() {
         find.widgetWithText(TextFormField, 'Descrição (opcional)'),
         'Primeira linha\nSegunda linha',
       );
+      await tester.tap(find.byType(DropdownButtonFormField<int>));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('5 · Alta').last);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Salvar tarefa'));
       await tester.pumpAndSettle();
       expect(c.tasks.single.title, 'Minha tarefa');
+      expect(c.tasks.single.priority, 5);
       await tester.tap(find.byTooltip('Editar Minha tarefa'));
       await tester.pumpAndSettle();
       await tester.enterText(
@@ -105,5 +110,71 @@ void main() {
     await tester.tap(find.text('Salvar tarefa'));
     await tester.pumpAndSettle();
     expect(find.byType(AlertDialog), findsNothing);
+  });
+  testWidgets('examples, visible filters and search work together', (
+    tester,
+  ) async {
+    final c = await start(tester);
+    await tester.tap(find.text('Experimentar exemplos'));
+    await tester.pumpAndSettle();
+    expect(c.tasks.single.title, 'Example');
+    await tester.tap(find.text('Concluídas'));
+    await tester.pumpAndSettle();
+    expect(find.text('Nenhuma tarefa por aqui.'), findsOneWidget);
+    await tester.tap(find.text('Todas'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Buscar tarefas'),
+      'missing',
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Example'), findsNothing);
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Buscar tarefas'),
+      'example',
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Example'), findsOneWidget);
+  });
+  testWidgets(
+    'loading disables creation and failed loading exposes a working retry',
+    (tester) async {
+      final store = MemoryStore()..fail = true;
+      final c = TaskController(store);
+      addTearDown(c.dispose);
+      await tester.pumpWidget(TaskApp(controller: c));
+      expect(find.byType(CircularProgressIndicator), findsWidgets);
+      expect(
+        tester.widget<FilledButton>(find.byType(FilledButton).first).onPressed,
+        isNull,
+      );
+      await c.load();
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Não foi possível abrir'), findsOneWidget);
+      store.fail = false;
+      await tester.tap(find.text('Tentar novamente'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Não foi possível abrir'), findsNothing);
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
+      await tester.pumpAndSettle();
+      expect(find.text('Tudo começa com uma tarefa.'), findsOneWidget);
+    },
+  );
+  testWidgets('completion control has its own accessible action label', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    try {
+      await start(
+        tester,
+        store: MemoryStore()..rows = [Task(id: 1, title: 'Example')],
+      );
+      expect(
+        tester.getSemantics(find.byType(Checkbox)).label,
+        'Concluir Example',
+      );
+    } finally {
+      semantics.dispose();
+    }
   });
 }

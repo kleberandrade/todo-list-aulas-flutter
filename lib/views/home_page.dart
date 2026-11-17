@@ -49,6 +49,11 @@ class _HomePageState extends State<HomePage> {
               constraints: const BoxConstraints(maxWidth: 1120),
               child: CustomScrollView(
                 slivers: [
+                  if (c.error != null)
+                    SliverPadding(
+                      padding: const EdgeInsets.all(24),
+                      sliver: SliverToBoxAdapter(child: _error()),
+                    ),
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
                     sliver: SliverToBoxAdapter(child: _header()),
@@ -61,11 +66,6 @@ class _HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     sliver: SliverToBoxAdapter(child: _controls()),
                   ),
-                  if (c.error != null)
-                    SliverPadding(
-                      padding: const EdgeInsets.all(24),
-                      sliver: SliverToBoxAdapter(child: _error()),
-                    ),
                   if (c.loading)
                     const SliverFillRemaining(
                       hasScrollBody: false,
