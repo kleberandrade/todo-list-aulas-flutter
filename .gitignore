@@ -70,3 +70,16 @@
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+
+# Current Flutter generated files
+.flutter-plugins-dependencies
+coverage/
+.metrics/
+**/Flutter/ephemeral/
+**/Flutter/flutter_export_environment.sh
+**/Flutter/Generated.xcconfig
+**/Flutter/GeneratedPluginRegistrant.swift
+**/Pods/
+**/ephemeral/
+web/sqlite3.wasm
+web/sqflite_sw.js
