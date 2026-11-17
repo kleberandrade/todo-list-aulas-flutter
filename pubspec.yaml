@@ -19,5 +19,10 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   sqflite_common_ffi: ^2.4.7
+dependency_overrides:
+  # Flutter 3.50.0 pins older patches; validated with this app's tests/builds.
+  # Remove these exceptions when Flutter's own pins reach these versions.
+  material_color_utilities: 0.13.1
+  test_api: 0.7.15
 flutter:
   uses-material-design: true

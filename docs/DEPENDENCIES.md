@@ -21,14 +21,16 @@ All direct registry dependencies are at the latest published stable release reso
 
 The major-version upgrade refreshed 27 dependencies before adding the two standalone design packages. The lockfile includes current SQLite 3.9.1, intl 0.20.3, web 1.1.2 and the resolved transitive graph. Web worker and WASM files were regenerated together with the new adapter's official setup command.
 
-## Two upstream SDK pins
+## Two explicitly validated SDK-pin exceptions
 
-The complete `flutter pub outdated --json` output is committed in [dependency-audit.json](dependency-audit.json). Its only remaining entries are controlled by Flutter's own SDK manifests:
+At the user's request, the final two packages are now updated with exact, project-local `dependency_overrides`:
 
-- `material_color_utilities`: current/resolvable **0.13.0**, latest published **0.13.1**; pinned by `packages/flutter/pubspec.yaml`.
-- `test_api`: current/resolvable **0.7.14**, latest published **0.7.15**; pinned by `packages/flutter_test/pubspec.yaml`.
+- `material_color_utilities`: **0.13.0 → 0.13.1**. The [official changelog](https://pub.dev/packages/material_color_utilities/changelog) describes a hue calculation correction and a documentation fix.
+- `test_api`: **0.7.14 → 0.7.15**. The [official changelog](https://pub.dev/packages/test_api/changelog) adds backend API exports.
 
-There are no further upgradable or resolvable packages. No `dependency_overrides` were added to force those two past the SDK's tested constraints; “all latest compatible” is different from “every published version regardless of its constraints.” No package in this audit is reported discontinued, retracted or affected by a listed advisory.
+Flutter 3.50.0 still pins the previous patches in its own manifests. These overrides deliberately go beyond those pins; successful app checks are project-specific compatibility evidence, not an upstream Flutter guarantee. Exact versions and lockfile hashes keep the exceptions reproducible. Remove each override when a future Flutter release pins that version or newer, then resolve and run the checks again. No SDK files were edited.
+
+The complete `flutter pub outdated --json` output (overrides enabled, the default) is committed in [dependency-audit.json](dependency-audit.json): **no outdated entries remain**. The lockfile contains both requested versions. This audit is not a separate security assessment.
 
 ## Behavioral validation
 

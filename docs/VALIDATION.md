@@ -2,13 +2,15 @@
 
 Current toolchain: **Flutter 3.50.0 / Dart 3.14.0**, official tag `3.50.0` at `ab2912035e160d9cad6306df307576da6128ebdb`, using a separate SDK for this project. Host: macOS 27.2.1 Apple Silicon, Chrome 157, Xcode 27.2, CocoaPods 1.16.2. The shared/global Flutter 3.41.9 installation was not upgraded.
 
+These checks were rerun after the final two patch overrides were applied. The Web edit dialog was opened and cancelled without changing existing records, and the rebuilt macOS app was quit and relaunched to verify the current binary.
+
 ## Current checks
 
 - Formatting on `lib` and `test`: clean with the current Dart formatter.
 - `flutter analyze --no-pub`: no issues.
 - `flutter test --coverage --no-pub`: **20 passed**. Includes real SQLite v1→v2 migration, reopen/undo/ID reuse/retry, input boundaries, filters/search/order, controller failures, widget CRUD/priority/retry/accessibility, narrow layout at 150% text size, and a new regression verifying that the current Material dropdown is disabled during save.
 - Measured line coverage: **397/404 (98.3%)**. This covers imported application files, not every platform bootstrap path; it is not branch or mutation coverage. CI uploads its own LCOV report.
-- Dependency refresh: all direct registry dependencies and all resolvable transitive dependencies updated. Two SDK pins remain without overrides. See [DEPENDENCIES.md](DEPENDENCIES.md) and [the machine-readable audit](dependency-audit.json).
+- Dependency refresh: all direct registry dependencies and transitive dependencies updated, including exact project-local overrides for `material_color_utilities` **0.13.1** and `test_api` **0.7.15**. No outdated entries remain with overrides enabled. See [DEPENDENCIES.md](DEPENDENCIES.md) and [the machine-readable audit](dependency-audit.json).
 - SQLite Web worker and WASM regenerated together using `dart run sqflite_common_ffi_web:setup --force`.
 - `flutter build web --release --no-wasm-dry-run --no-pub`: passed. This is the JavaScript Flutter target using SQLite's WASM binary, not a production Flutter Wasm-runtime test.
 - `flutter build macos --release --no-pub`: passed. `file` confirms **arm64 + x86_64** slices in the universal binary. The app was opened on Apple Silicon and showed the three native tasks from the earlier version. Intel runtime execution was not performed.

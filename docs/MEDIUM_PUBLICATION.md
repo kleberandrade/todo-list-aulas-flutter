@@ -23,3 +23,7 @@ The editor's five exercise headings and five uploaded images were checked. After
 These are real captures of the published page. Only the surrounding Chrome controls/bookmarks were cropped from the saved evidence; no article content was redrawn or generated in those screenshots. The image-generation tool was used solely for the editorial cover, with its prompt recorded alongside the asset.
 
 The extension's direct chooser upload required broader local-file permission. That setting was **not** changed: the images were uploaded using Chrome's ordinary native macOS file picker instead. The browser's supported connection later became unavailable, and the remaining editing/publication verification used the documented native app controls. Only this project's article was edited.
+
+## Final dependency correction
+
+The same article was republished again after the requested patch updates. Its YAML example now includes the exact local overrides for material_color_utilities 0.13.1 and test_api 0.7.15. The old paragraph claiming no overrides was replaced with their rationale, project-specific validation and removal condition. The normal reader view showed both versions and the restored section 3 heading; the publication returned `postPublishedType=repub`. No email action was used.

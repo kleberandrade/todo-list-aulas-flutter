@@ -64,6 +64,9 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   sqflite_common_ffi: ^2.4.7
+dependency_overrides:
+  material_color_utilities: 0.13.1
+  test_api: 0.7.15
 ```
 
 Pense nas responsabilidades de cada grupo:
@@ -83,7 +86,7 @@ As traduções Material também vêm desse pacote. Em `MaterialApp`, usamos `Glo
 
 Outro detalhe desta atualização é `DropdownButtonFormField.enabled`: o formulário usa `enabled: !_saving` para bloquear a prioridade enquanto salva. Não dependemos somente de deixar `onChanged` nulo.
 
-O `pubspec.lock` registra as versões exatas resolvidas. Dois pacotes transitivos, `material_color_utilities` e `test_api`, permanecem nas versões fixadas pelo Flutter 3.50.0. Não usamos `dependency_overrides` para ultrapassar essas restrições. Consulte `docs/DEPENDENCIES.md` para conferir a auditoria.
+O `pubspec.lock` registra as versões exatas resolvidas. A seção `dependency_overrides` aplica duas exceções locais: `material_color_utilities` 0.13.1 e `test_api` 0.7.15. O Flutter 3.50.0 ainda fixa as versões anteriores. Por isso, validamos estas atualizações com análise, testes e builds do projeto; isso não é uma garantia de compatibilidade para qualquer app. Quando o SDK atualizar suas próprias versões, remova as exceções e repita as verificações. Consulte `docs/DEPENDENCIES.md` para conferir a auditoria.
 
 ## 3. Separe as responsabilidades antes de seguir o código
 
