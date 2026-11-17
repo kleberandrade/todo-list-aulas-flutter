@@ -1,86 +1,104 @@
-# Flutter To-Do List
+# Lista — Flutter Task Planner
 
-[![Language: Dart](https://img.shields.io/badge/Language-Dart-0175C2)](https://github.com/kleberandrade/todo-list-aulas-flutter/blob/master/pubspec.yaml)
-[![Framework: Flutter](https://img.shields.io/badge/Framework-Flutter-02569B)](https://github.com/kleberandrade/todo-list-aulas-flutter/blob/master/pubspec.yaml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-555555)](https://github.com/kleberandrade/todo-list-aulas-flutter/blob/master/LICENSE)
+[![Flutter 3.41.9](https://img.shields.io/badge/Flutter-3.41.9-02569B?logo=flutter)](https://docs.flutter.dev/)
+[![Dart 3.11.5](https://img.shields.io/badge/Dart-3.11.5-0175C2?logo=dart)](https://dart.dev/)
+[![Flutter checks](https://github.com/kleberandrade/todo-list-aulas-flutter/actions/workflows/flutter.yml/badge.svg?branch=master)](https://github.com/kleberandrade/todo-list-aulas-flutter/actions/workflows/flutter.yml)
+[![MIT License](https://img.shields.io/badge/License-MIT-555555)](LICENSE)
 
-Flutter classroom app for managing everyday tasks.
+An offline task planner and classroom example by **Kleber de Oliveira Andrade**. Create, edit, complete, reopen, and delete everyday tasks, with durable SQLite storage and immediate undo. The interface is in Brazilian Portuguese; this repository documentation is in English.
 
-## Getting started
+![Actual Flutter Web release application](docs/screenshots/web-desktop.jpg)
 
-- Select a Flutter release whose bundled Dart SDK satisfies the manifest constraint, then run the commands below from the repository root.
+## Run locally
+
+Verified toolchain: **Flutter 3.41.9 / Dart 3.11.5**. The manifest requires Flutter >=3.41.0 and Dart >=3.11.0 <4.0.0. The committed lockfile records the resolved versions; newer package releases may require a newer SDK.
 
 ```sh
-flutter pub get
-flutter run
+git clone https://github.com/kleberandrade/todo-list-aulas-flutter.git
+cd todo-list-aulas-flutter
+flutter pub get --enforce-lockfile
+# Generates the SQLite worker and its matching WASM binary; first run may take minutes.
+dart run sqflite_common_ffi_web:setup
+flutter run -d chrome --web-port 8765
 ```
 
-- If the app depends on Firebase or another external service, configure your own service project using the dependencies and original notes; credentials are not supplied by this guide.
+Keep the same host and port to reopen the same browser database. Web storage belongs to the browser origin and is separate from native application storage. Clearing site data, using a different browser/profile, or changing the origin will not retain that database. The SQLite Web adapter is experimental; multi-tab synchronization of the visible list is not provided. There is no server, account, cloud sync, or telemetry in application code. Initial Web asset loading requires serving the build; this project does not promise an offline-installable PWA.
 
-## Recorded requirements
+For native development:
 
-- Dart SDK constraint from [`pubspec.yaml`](https://github.com/kleberandrade/todo-list-aulas-flutter/blob/master/pubspec.yaml): `>=2.1.0 <3.0.0`.
+```sh
+flutter run -d macos
+# With an available configured device/simulator:
+flutter devices
+flutter run -d <device-id>
+```
 
-## Repository map
+The regenerated platform projects retain Android `com.example.todo_list` and iOS `com.example.todoList`, preserving the application data sandbox when upgrading with the same signing identity. Platform baselines: Android uses Flutter's supported SDK defaults, iOS 15+, macOS 12+. Android development requires its SDK/JDK and accepted licenses; iOS/macOS require Xcode and CocoaPods. Distribution signing is not configured (Android release currently uses the template debug key). Do not uninstall an existing native app to migrate its data.
 
-- [lib](https://github.com/kleberandrade/todo-list-aulas-flutter/tree/master/lib)
-- [android](https://github.com/kleberandrade/todo-list-aulas-flutter/tree/master/android)
-- [ios](https://github.com/kleberandrade/todo-list-aulas-flutter/tree/master/ios)
+## Features and controls
 
-## Validation status
+- Choose **Nova tarefa** to open a validated form. Title: 1–120 trimmed characters; description: up to 2000 characters, including line breaks; priority: 1–5 (5 is highest).
+- Use the checkbox to complete/reopen, the pencil to edit, and the trash button to delete. All actions have visible controls/tooltips and support keyboard focus; Tab traverses controls and Enter/Space activates focused buttons.
+- Choose **Desfazer** in the deletion notification to restore the original record, ID and completion status. Undo is available while that notification is present; it is not a persistent trash bin.
+- Filter by **Todas**, **Pendentes**, or **Concluídas** and search title/description (case-insensitive). Ordering is pending first, then descending priority, then ascending ID for stable ties. The progress summary always counts the full list.
+- The empty state offers **Experimentar exemplos**, adding three local classroom tasks only when the database is empty. Examples are never automatically inserted over user data.
+- Forms preserve drafts after write failure. Loading, saving, empty results, and storage errors have explicit states and retry controls. The layout wraps on narrow screens, accommodates enlarged text, and limits reading width on desktop.
 
-This update documents the tracked source and project metadata. It does not certify a successful build, device test or compatibility with a current toolchain. Follow any project-specific validation instructions in the original material.
+## Architecture and glossary
 
-## License and attribution
+`Task` is an immutable domain value. A draft has no ID; SQLite assigns the ID when it is saved. Priority 5 is highest. A completed task can be reopened. `TaskStore` is the persistence contract, `TaskRepository` owns SQL and migration, and `TaskController` owns presentation state and serialized user writes. Widgets render state and collect input; they do not execute SQL.
 
-See [LICENSE](https://github.com/kleberandrade/todo-list-aulas-flutter/blob/master/LICENSE) and any notices accompanying third-party code and assets. This documentation update does not change licensing or authorship.
+- `lib/models/task.dart`: validation and legacy row decoding.
+- `lib/data/task_repository.dart`: schema, CRUD, stable ordering, examples, restoration and retryable opening.
+- `lib/data/platform_native.dart` / `platform_web.dart`: native SQLite / experimental IndexedDB-backed SQLite selection through a conditional import.
+- `lib/state/task_controller.dart`: filters, search, progress, busy/error state and success-after-write behavior.
+- `lib/views/`: home, task card and scrollable form dialog. Material 3 components replace obsolete Slidable/Flushbar APIs.
 
----
+## Existing data and migration
 
-## Original project material
+The database remains **`todo_list.db`**, table **`task`**. On opening an original version-1 database, SQLite transactionally migrates to version 2, copying the original `id`, `title`, `description` and `isDone` fields into an equivalent table with `priority` defaulting to 3 and `AUTOINCREMENT` IDs. The table replacement preserves original IDs and nullable fields, while preventing a new task from reusing an ID still offered for undo. The transaction rolls back on failure; the application does not reset or delete a database it cannot read.
 
-# Lista de Tarefas
+Legacy null/blank titles display as **Tarefa sem título** and null descriptions display as empty. Original oversized text remains readable; editing requires satisfying the new limits. A version-1 fixture is upgraded in a real file-backed SQLite test and reopened. Native database files are not automatically imported into the independent browser database. Schema downgrade to the 2019 application is unsupported; back up native app data before upgrading if you need to retain a copy for that older app.
 
-Aplicativo para gerenciar as tarefas do dia-a-dia criado para disciplina de Programação Mobile.
+## Verification
 
-Tutorial de criação deste app: http://bit.ly/2jXXU7Q
+```sh
+dart format --output=none --set-exit-if-changed lib test
+flutter analyze
+flutter test --coverage
+dart run sqflite_common_ffi_web:setup
+flutter build web --release --no-wasm-dry-run
+# Apple Silicon workaround for Flutter 3.41 + Xcode 27 (see notes below):
+flutter build macos --release --config-only
+xcodebuild -workspace macos/Runner.xcworkspace -scheme Runner \
+  -configuration Release -derivedDataPath build/macos \
+  -destination 'platform=macOS,arch=arm64' ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build
+# Requires an appropriately configured Apple toolchain; no signing in this command:
+flutter build ios --release --no-codesign
+```
 
-<p align="center">
-    <img src="https://miro.medium.com/max/1440/1*oUhhTFGunBMuh4Av-7rR7A.png" width="800"/>
-</p>
+The Web command builds the JavaScript Flutter target; `--no-wasm-dry-run` skips the unrelated optional Flutter Wasm compatibility probe. SQLite itself still uses its generated WASM binary. Regenerate the worker/binary together after changing their package versions; generated Web binaries are ignored in Git and rebuilt in CI.
 
-## Como clonar e importar
+**Xcode 27 limitation:** the default universal `flutter build macos --release` encounters the upstream [lipo architecture verification bug](https://github.com/flutter/flutter/issues/188346) with this Flutter version. The single-architecture command above builds Apple Silicon only. Intel/universal macOS binaries are not validated here; do not treat that workaround as a universal release. It changes no shared SDK files.
 
--   Faça um fork do projeto
--   Abra o terminal do Visual Studio Code
--   Digite (troque kleberandrade pelo nome do seu usuários): git clone https://github.com/kleberandrade/todo-list-aulas-flutter todo_list
+Tests cover domain boundaries, old database migration, reopen persistence, ordering, edit/complete/delete/restore, ID collision prevention, failed-open retry, examples, controller errors and concurrent writes, widget CRUD/undo, form validation/draft recovery, and narrow layouts at 150% text size. The deliberately invalid-database test prints an expected SQLite error while testing recovery; this does not indicate a passing test was skipped.
 
-## Desafios
+The `Flutter` workflow on `master` and pull requests runs formatting, analysis, tests/coverage, worker generation and the Web release build, and uploads the resulting build and LCOV as artifacts. Read its actual run for current results; no coverage badge or passing status is hard-coded. `crapper`, `dryer` and `mutator` were inspected but do not support Dart, so no scores from those tools are reported.
 
--   Na lista de tarefas, adicionar divisões entre as linhas (use [ListView.separated](https://api.flutter.dev/flutter/widgets/ListView/ListView.separated.html))
--   Adicionar validações no cadastro de uma atividade (lembre-se que é preciso utilizar o widget [TextFormField](https://api.flutter.dev/flutter/material/TextFormField-class.html) para isso)
--   Campo descrição precisar aceitar múltiplas linhas
--   Criar um campo para nível de prioridades que aceita valores entre 1 (baixa prioridade) e 5 (alta prioridade). Representar isso no card da forma como achar mais interessante.
--   Adicionar um [PercentIndicator](https://pub.dev/packages/percent_indicator) circular na barra de navegação para indicar a porcentagem de tarefas concluídas
+See [verification notes](docs/VALIDATION.md), the [action log](docs/WORK_LOG.md), and actual application screenshots in `docs/screenshots/` for measured results and platform limitations.
 
-## Licença
+## Classroom article and credits
 
-    Copyright 2019 Kleber de Oliveira Andrade
-    
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
-    
-    The above copyright notice and this permission notice shall be included in all
-    copies or substantial portions of the Software.
-    
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    SOFTWARE.
+Original Portuguese tutorial: [Criando uma Lista de Tarefas com Flutter](https://medium.com/flutter-comunidade-br/criando-uma-lista-de-tarefas-com-flutter-fc81fa2bac6a) ([original short link](http://bit.ly/2jXXU7Q)). It was opened and read during modernization. The article's original challenges—validation, multiline description, priority and completion progress—are now implemented. Further exercises: alternate sorting with tests, non-destructive import/export, or persistent trash with recovery rules.
+
+The available browser session is signed out of Medium and offers no editorial access. A complete Portuguese technical revision is prepared in [docs/medium-update.pt-BR.md](docs/medium-update.pt-BR.md); **the published article was not updated**. The draft preserves the article identity, original language, teaching purpose and third-party reference attribution.
+
+Original reference material remains useful as historical reading:
+
+- [Flutter: Persist data with SQLite](https://docs.flutter.dev/cookbook/persistence/sqlite)
+- [Using SQLite in Flutter](https://medium.com/flutter-community/using-sqlite-in-flutter-187c1a82e8b)
+- [SQFlite Database in Flutter](https://medium.com/@mohamedraja_77/sqflite-database-in-flutter-c0b7be83bcd2)
+- [SQLite MVP app video](https://www.youtube.com/watch?v=Yzfxqd9-6QY)
+- [Adding SQLite for offline support video](https://www.youtube.com/watch?v=zEqH2qYs7Pg)
+
+Copyright **2019 Kleber de Oliveira Andrade**. [MIT License](LICENSE) is unchanged. Flutter-generated platform templates/icons and dependencies retain their upstream licenses; no third-party article content has been relicensed. New interface elements are rendered with Flutter components, without stock imagery or custom remote-font dependencies.
