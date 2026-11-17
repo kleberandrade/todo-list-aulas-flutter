@@ -1,7 +1,7 @@
 # Lista — Flutter Task Planner
 
-[![Flutter 3.41.9](https://img.shields.io/badge/Flutter-3.41.9-02569B?logo=flutter)](https://docs.flutter.dev/)
-[![Dart 3.11.5](https://img.shields.io/badge/Dart-3.11.5-0175C2?logo=dart)](https://dart.dev/)
+[![Flutter 3.50.0](https://img.shields.io/badge/Flutter-3.50.0-02569B?logo=flutter)](https://docs.flutter.dev/)
+[![Dart 3.14.0](https://img.shields.io/badge/Dart-3.14.0-0175C2?logo=dart)](https://dart.dev/)
 [![Flutter checks](https://github.com/kleberandrade/todo-list-aulas-flutter/actions/workflows/flutter.yml/badge.svg?branch=master)](https://github.com/kleberandrade/todo-list-aulas-flutter/actions/workflows/flutter.yml)
 [![MIT License](https://img.shields.io/badge/License-MIT-555555)](LICENSE)
 
@@ -11,7 +11,7 @@ An offline task planner and classroom example by **Kleber de Oliveira Andrade**.
 
 ## Run locally
 
-Verified toolchain: **Flutter 3.41.9 / Dart 3.11.5**. The manifest requires Flutter >=3.41.0 and Dart >=3.11.0 <4.0.0. The committed lockfile records the resolved versions; newer package releases may require a newer SDK.
+Verified toolchain: **Flutter 3.50.0 / Dart 3.14.0**. The manifest requires Flutter >=3.50.0 and Dart >=3.14.0 <4.0.0. The committed lockfile records the resolved versions. All direct registry packages and all resolvable transitive packages were refreshed; two upstream SDK pins remain as documented in [the dependency audit](docs/DEPENDENCIES.md). Install/select Flutter 3.50.0 before running these commands; the old globally installed SDK does not satisfy this project anymore.
 
 ```sh
 git clone https://github.com/kleberandrade/todo-list-aulas-flutter.git
@@ -22,7 +22,7 @@ dart run sqflite_common_ffi_web:setup
 flutter run -d chrome --web-port 8765
 ```
 
-Keep the same host and port to reopen the same browser database. Web storage belongs to the browser origin and is separate from native application storage. Clearing site data, using a different browser/profile, or changing the origin will not retain that database. The SQLite Web adapter is experimental; multi-tab synchronization of the visible list is not provided. There is no server, account, cloud sync, or telemetry in application code. Initial Web asset loading requires serving the build; this project does not promise an offline-installable PWA.
+Keep the same host and port to reopen the same browser database. Web storage belongs to the browser origin and is separate from native application storage. Clearing site data, using a different browser/profile, or changing the origin will not retain that database. The SQLite Web adapter persists data in IndexedDB; multi-tab synchronization of the visible list is not provided. There is no server, account, cloud sync, or telemetry in application code. Initial Web asset loading requires serving the build; this project does not promise an offline-installable PWA.
 
 For native development:
 
@@ -50,7 +50,7 @@ The regenerated platform projects retain Android `com.example.todo_list` and iOS
 
 - `lib/models/task.dart`: validation and legacy row decoding.
 - `lib/data/task_repository.dart`: schema, CRUD, stable ordering, examples, restoration and retryable opening.
-- `lib/data/platform_native.dart` / `platform_web.dart`: native SQLite / experimental IndexedDB-backed SQLite selection through a conditional import.
+- `lib/data/platform_native.dart` / `platform_web.dart`: native SQLite / IndexedDB-backed SQLite selection through a conditional import.
 - `lib/state/task_controller.dart`: filters, search, progress, busy/error state and success-after-write behavior.
 - `lib/views/`: home, task card and scrollable form dialog. Material 3 components replace obsolete Slidable/Flushbar APIs.
 
@@ -68,18 +68,14 @@ flutter analyze
 flutter test --coverage
 dart run sqflite_common_ffi_web:setup
 flutter build web --release --no-wasm-dry-run
-# Apple Silicon workaround for Flutter 3.41 + Xcode 27 (see notes below):
-flutter build macos --release --config-only
-xcodebuild -workspace macos/Runner.xcworkspace -scheme Runner \
-  -configuration Release -derivedDataPath build/macos \
-  -destination 'platform=macOS,arch=arm64' ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build
+flutter build macos --release
 # Requires an appropriately configured Apple toolchain; no signing in this command:
 flutter build ios --release --no-codesign
 ```
 
 The Web command builds the JavaScript Flutter target; `--no-wasm-dry-run` skips the unrelated optional Flutter Wasm compatibility probe. SQLite itself still uses its generated WASM binary. Regenerate the worker/binary together after changing their package versions; generated Web binaries are ignored in Git and rebuilt in CI.
 
-**Xcode 27 limitation:** the default universal `flutter build macos --release` encounters the upstream [lipo architecture verification bug](https://github.com/flutter/flutter/issues/188346) with this Flutter version. The single-architecture command above builds Apple Silicon only. Intel/universal macOS binaries are not validated here; do not treat that workaround as a universal release. It changes no shared SDK files.
+The current Flutter 3.50.0 toolchain builds the universal macOS target (arm64 + x86_64) without the older single-architecture workaround. The upgrade initially found stale Xcode precompiled headers; only this project's generated build/workspace caches were cleared before rebuilding. Intel runtime testing is not claimed. Flutter generated its supported Swift Package integration while retaining the existing custom CocoaPods configuration; both Apple release builds were verified.
 
 Tests cover domain boundaries, old database migration, reopen persistence, ordering, edit/complete/delete/restore, ID collision prevention, failed-open retry, examples, controller errors and concurrent writes, widget CRUD/undo, form validation/draft recovery, and narrow layouts at 150% text size. The deliberately invalid-database test prints an expected SQLite error while testing recovery; this does not indicate a passing test was skipped.
 
@@ -91,7 +87,7 @@ See [verification notes](docs/VALIDATION.md), the [action log](docs/WORK_LOG.md)
 
 Original Portuguese tutorial: [Criando uma Lista de Tarefas com Flutter](https://medium.com/flutter-comunidade-br/criando-uma-lista-de-tarefas-com-flutter-fc81fa2bac6a) ([original short link](http://bit.ly/2jXXU7Q)). It was opened and read during modernization. The article's original challenges—validation, multiline description, priority and completion progress—are now implemented. Further exercises: alternate sorting with tests, non-destructive import/export, or persistent trash with recovery rules.
 
-The available browser session is signed out of Medium and offers no editorial access. A complete Portuguese technical revision is prepared in [docs/medium-update.pt-BR.md](docs/medium-update.pt-BR.md); **the published article was not updated**. The draft preserves the article identity, original language, teaching purpose and third-party reference attribution.
+The Portuguese tutorial was updated and republished at its original URL with a new original editorial cover, real application images, two diagrams, explained implementation excerpts and five progressive exercises. The complete source is in [docs/medium-update.pt-BR.md](docs/medium-update.pt-BR.md); see [publication notes](docs/MEDIUM_PUBLICATION.md) for the verified publication status. Its original identity, language, teaching purpose and third-party references are preserved.
 
 Original reference material remains useful as historical reading:
 

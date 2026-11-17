@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100" role="img" aria-label="Da digitação ao SQLite">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#285D4B"/></marker></defs>
+<rect width="1600" height="1100" fill="#F6F7F2"/>
+<text x="80" y="95" font-family="Arial, sans-serif" font-size="48" font-weight="700" fill="#1D342B">Da digitação ao SQLite</text>
+<text x="80" y="148" font-family="Arial, sans-serif" font-size="29" font-weight="400" fill="#536159">O caminho percorrido ao salvar uma tarefa</text>
+<rect x="80" y="210" width="420" height="230" rx="24" fill="#FFFFFF" stroke="#BCCEBE" stroke-width="2"/>
+<text x="108" y="264" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#1D342B">1 · Formulário</text>
+<text x="108" y="318" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">Valida a entrada</text>
+<text x="108" y="364" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">Constrói uma Task</text>
+<text x="108" y="410" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">Mantém o rascunho</text>
+<rect x="590" y="210" width="420" height="230" rx="24" fill="#FFFFFF" stroke="#BCCEBE" stroke-width="2"/>
+<text x="618" y="264" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#1D342B">2 · Controlador</text>
+<text x="618" y="318" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">Marca busy = true</text>
+<text x="618" y="364" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">Aguarda a gravação</text>
+<text x="618" y="410" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">Bloqueia novos envios</text>
+<rect x="1100" y="210" width="420" height="230" rx="24" fill="#FFFFFF" stroke="#BCCEBE" stroke-width="2"/>
+<text x="1128" y="264" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#1D342B">3 · Repositório</text>
+<text x="1128" y="318" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">Valida novamente</text>
+<text x="1128" y="364" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">Executa INSERT ou UPDATE</text>
+<text x="1128" y="410" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">Usa argumentos SQL</text>
+<path d="M 510 325 L 575 325" fill="none" stroke="#285D4B" stroke-width="5" marker-end="url(#arrow)"/>
+<path d="M 1020 325 L 1085 325" fill="none" stroke="#285D4B" stroke-width="5" marker-end="url(#arrow)"/>
+<rect x="1100" y="555" width="420" height="220" rx="24" fill="#E5EDE3" stroke="#BCCEBE" stroke-width="2"/>
+<text x="1128" y="609" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#1D342B">4 · SQLite local</text>
+<text x="1128" y="663" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">Grava em todo_list.db</text>
+<text x="1128" y="709" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">Devolve sucesso ou erro</text>
+<path d="M 1310 450 L 1310 540" fill="none" stroke="#285D4B" stroke-width="5" marker-end="url(#arrow)"/>
+<rect x="590" y="555" width="420" height="220" rx="24" fill="#E5EDE3" stroke="#BCCEBE" stroke-width="2"/>
+<text x="618" y="609" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#1D342B">5 · Lista atualizada</text>
+<text x="618" y="663" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">Consulta store.all()</text>
+<text x="618" y="709" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">Atualiza o estado</text>
+<text x="618" y="755" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">Reconstrói os widgets</text>
+<path d="M 1090 665 L 1025 665" fill="none" stroke="#285D4B" stroke-width="5" marker-end="url(#arrow)"/>
+<text x="80" y="610" font-family="Arial, sans-serif" font-size="31" font-weight="700" fill="#1D342B">A lista só muda depois</text>
+<text x="80" y="656" font-family="Arial, sans-serif" font-size="31" font-weight="700" fill="#1D342B">da confirmação do</text>
+<text x="80" y="702" font-family="Arial, sans-serif" font-size="31" font-weight="700" fill="#1D342B">armazenamento.</text>
+<rect x="80" y="855" width="1440" height="155" rx="24" fill="#FFF0DC"/>
+<text x="110" y="910" font-family="Arial, sans-serif" font-size="30" font-weight="400" fill="#6A470C">Se a gravação falhar: o formulário mantém o rascunho e mostra o erro.</text>
+<text x="110" y="956" font-family="Arial, sans-serif" font-size="30" font-weight="400" fill="#6A470C">O estado ocupado é liberado para uma nova tentativa.</text>
+</svg>

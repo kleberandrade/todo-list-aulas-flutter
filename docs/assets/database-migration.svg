@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100" role="img" aria-label="Atualizar o esquema sem apagar tarefas">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#285D4B"/></marker></defs>
+<rect width="1600" height="1100" fill="#F6F7F2"/>
+<text x="80" y="95" font-family="Arial, sans-serif" font-size="48" font-weight="700" fill="#1D342B">Atualizar o esquema sem apagar tarefas</text>
+<text x="80" y="148" font-family="Arial, sans-serif" font-size="29" font-weight="400" fill="#536159">Migração v1 → v2 do banco existente</text>
+<rect x="80" y="215" width="560" height="450" rx="24" fill="#FFFFFF" stroke="#BCCEBE" stroke-width="2"/>
+<text x="108" y="269" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#1D342B">Banco v1 · task</text>
+<text x="108" y="323" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">id · chave primária</text>
+<text x="108" y="369" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">title · texto</text>
+<text x="108" y="415" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">description · texto</text>
+<text x="108" y="461" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">isDone · 0 ou 1</text>
+<rect x="960" y="215" width="560" height="450" rx="24" fill="#E5EDE3" stroke="#BCCEBE" stroke-width="2"/>
+<text x="988" y="269" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#1D342B">Banco v2 · task</text>
+<text x="988" y="323" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">id · mesmo valor, AUTOINCREMENT</text>
+<text x="988" y="369" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">title · preservado</text>
+<text x="988" y="415" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">description · preservada</text>
+<text x="988" y="461" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">isDone · preservado</text>
+<text x="988" y="507" font-family="Arial, sans-serif" font-size="27" font-weight="400" fill="#1D342B">priority · padrão 3 (de 1 a 5)</text>
+<path d="M 665 430 L 935 430" fill="none" stroke="#285D4B" stroke-width="5" marker-end="url(#arrow)"/>
+<text x="689" y="350" font-family="Arial, sans-serif" font-size="29" font-weight="700" fill="#1D342B">Uma transação</text>
+<text x="679" y="500" font-family="Arial, sans-serif" font-size="26" font-weight="400" fill="#1D342B">Cria → copia</text>
+<text x="679" y="546" font-family="Arial, sans-serif" font-size="26" font-weight="400" fill="#1D342B">→ renomeia</text>
+<rect x="80" y="725" width="1440" height="135" rx="24" fill="#FFFFFF" stroke="#BCCEBE" stroke-width="2"/>
+<text x="110" y="775" font-family="Arial, sans-serif" font-size="29" font-weight="400" fill="#1D342B">Exemplo didático: ID 42 continua sendo ID 42 após a migração.</text>
+<text x="110" y="821" font-family="Arial, sans-serif" font-size="29" font-weight="400" fill="#1D342B">Título, descrição e conclusão permanecem; a prioridade passa a ser 3.</text>
+<rect x="80" y="900" width="1440" height="105" rx="24" fill="#FFF0DC"/>
+<text x="110" y="963" font-family="Arial, sans-serif" font-size="30" font-weight="400" fill="#6A470C">Se a migração falhar, a transação desfaz as alterações (rollback).</text>
+</svg>
